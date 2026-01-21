@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teacher Dashboard</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="#">Teacher Dashboard</a>
+      <div class="ms-auto text-white">
+        {{ teacher_name }}
+        <a class="btn btn-outline-light btn-sm ms-3" href="{{ url_for('logout') }}">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container py-4">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="row g-3 mb-4">
+      <div class="col-md-3">
+        <div class="card text-bg-primary">
+          <div class="card-body">
+            <h6 class="card-title mb-1">Total Students</h6>
+            <div class="display-6">{{ student_count }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card text-bg-success">
+          <div class="card-body">
+            <h6 class="card-title mb-1">Students Submitted</h6>
+            <div class="display-6">{{ submitted_student_count }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+      <div class="card-header">Create New Question</div>
+      <div class="card-body">
+        <form method="post" action="{{ url_for('create_question') }}">
+          <div class="mb-3">
+            <label class="form-label">Question</label>
+            <textarea class="form-control" name="question_text" rows="2" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Model Answer</label>
+            <textarea class="form-control" name="model_answer" rows="3" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Max Marks</label>
+            <input type="number" class="form-control" name="max_marks" min="1" value="5" required />
+          </div>
+          <div class="row g-3 mb-3">
+            <div class="col-md-6 d-flex align-items-center">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="allow_resubmission_new" name="allow_resubmission">
+                <label class="form-check-label" for="allow_resubmission_new">Allow resubmission</label>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Opens At (Local)</label>
+              <input type="datetime-local" class="form-control" name="open_at">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Closes At (Local)</label>
+              <input type="datetime-local" class="form-control" name="close_at">
+            </div>
+          </div>
+          <button class="btn btn-primary" type="submit">Create</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+      <div class="card-header">Your Questions</div>
+      <div class="card-body">
+        {% if questions %}
+          <div class="accordion" id="questionsAccordion">
+            {% for q in questions %}
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="heading{{ q[0] }}">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ q[0] }}">
+                    #{{ q[0] }} · Max {{ q[3] }} · {{ q[4] }}
+                  </button>
+                </h2>
+                <div id="collapse{{ q[0] }}" class="accordion-collapse collapse" data-bs-parent="#questionsAccordion">
+                  <div class="accordion-body">
+                    <form method="post" action="{{ url_for('update_question', question_id=q[0]) }}" class="mb-2">
+                      <div class="mb-2">
+                        <label class="form-label">Question</label>
+                        <textarea class="form-control" name="question_text" rows="2" required>{{ q[1] }}</textarea>
+                      </div>
+                      <div class="mb-2">
+                        <label class="form-label">Model Answer</label>
+                        <textarea class="form-control" name="model_answer" rows="3" required>{{ q[2] }}</textarea>
+                      </div>
+                      <div class="mb-2">
+                        <label class="form-label">Max Marks</label>
+                        <input class="form-control" type="number" name="max_marks" min="1" value="{{ q[3] }}" required />
+                      </div>
+                      <div class="row g-3 mb-2">
+                        <div class="col-md-6 d-flex align-items-center">
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="allow_resubmission_{{ q[0] }}" name="allow_resubmission" {% if q[5] %}checked{% endif %}>
+                            <label class="form-check-label" for="allow_resubmission_{{ q[0] }}">Allow resubmission</label>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label">Opens At (Local)</label>
+                          <input type="datetime-local" class="form-control" name="open_at" value="{% if q[6] %}{{ q[6][:16] }}{% endif %}">
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label">Closes At (Local)</label>
+                          <input type="datetime-local" class="form-control" name="close_at" value="{% if q[7] %}{{ q[7][:16] }}{% endif %}">
+                        </div>
+                      </div>
+                      <button class="btn btn-sm btn-success" type="submit">Update</button>
+                    </form>
+                    <form method="post" action="{{ url_for('delete_question', question_id=q[0]) }}" onsubmit="return confirm('Delete this question?');">
+                      <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-muted mb-0">No questions yet.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card shadow-sm">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Recent Submissions</span>
+        <a class="btn btn-sm btn-primary" href="{{ url_for('export_teacher_csv') }}">Export CSV</a>
+      </div>
+      <div class="card-body table-responsive">
+        {% if submissions %}
+          <table class="table table-striped align-middle">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Student</th>
+                <th>Question</th>
+                <th>Obtained-Score</th>
+                <th>Similarity</th>
+                <th>Submitted</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for s in submissions %}
+                <tr>
+                  <td>{{ s[0] }}</td>
+                  <td>{{ s[1] }}</td>
+                  <td class="text-truncate" style="max-width: 360px;">{{ s[2] }}</td>
+                  <td>{{ '%.2f'|format(s[3]) }}</td>
+                  <td>{{ '%.3f'|format(s[4]) }}</td>
+                  <td><small>{{ s[5] }}</small></td>
+                  <td>
+                    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('teacher_submission_detail', submission_id=s[0]) }}">View</a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% if total_pages and total_pages > 1 %}
+            <div class="d-flex justify-content-between align-items-center">
+              <div>Page {{ page }} of {{ total_pages }}</div>
+              <nav>
+                <ul class="pagination mb-0">
+                  <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('teacher_dashboard', page=page-1) }}">Previous</a>
+                  </li>
+                  <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('teacher_dashboard', page=page+1) }}">Next</a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          {% endif %}
+        {% else %}
+          <p class="text-muted mb-0">No submissions yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

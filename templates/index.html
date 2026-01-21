@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign in · Subjective Answer Evaluation</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <style>
+    :root { --brand:#2563eb; --brand-2:#7c3aed; --bg:#0f172a; }
+    body { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    .auth-hero { background: radial-gradient(1200px 600px at -10% -20%, rgba(37,99,235,.18), transparent),
+                              radial-gradient(900px 500px at 110% 10%, rgba(124,58,237,.18), transparent),
+                              linear-gradient(135deg, #0b1220 0%, #0f172a 100%);
+                 color: #e2e8f0; }
+    .auth-hero .brand { color:#fff; font-weight:700; letter-spacing:.2px; }
+    .auth-hero .headline { font-weight:700; font-size: 2.25rem; line-height:1.2; }
+    .auth-hero .subtext { color:#cbd5e1; }
+    .badge-soft { background: rgba(255,255,255,.08); color:#e2e8f0; border:1px solid rgba(255,255,255,.12); }
+    .auth-card { border-radius: 16px; }
+    .brand-mark { width:42px; height:42px; display:inline-grid; place-items:center; border-radius:10px; background:linear-gradient(135deg, var(--brand), var(--brand-2)); color:#fff; font-weight:700; }
+    .nav-pills .nav-link { border-radius: 10px; font-weight:600; }
+    .nav-pills .nav-link.active { background: linear-gradient(135deg, var(--brand), var(--brand-2)); box-shadow:0 6px 20px rgba(37,99,235,.25); }
+    .btn-brand { background: linear-gradient(135deg, var(--brand), var(--brand-2)); border:0; }
+    .btn-brand:hover { filter: brightness(1.05); }
+    .form-label { font-weight:600; }
+  </style>
+</head>
+<body>
+  <div class="container-fluid px-0">
+    <div class="row g-0 min-vh-100">
+      <div class="col-lg-7 d-none d-lg-block auth-hero p-5">
+        <div class="d-flex align-items-center h-100">
+          <div class="w-100 pe-5">
+            <div class="d-flex align-items-center gap-3 mb-4">
+              <div class="brand-mark">SE</div>
+              <div class="brand h5 mb-0">Subjective Answer Evaluation</div>
+            </div>
+            <div class="headline mb-3">Evaluate subjective answers with AI-level precision.</div>
+            <div class="subtext mb-4">Automated grading powered by modern semantic similarity and transformer models. Save time, ensure consistency, and give instant feedback.</div>
+            <div class="d-flex gap-2 flex-wrap">
+              <span class="badge badge-soft">BERT embeddings</span>
+              <span class="badge badge-soft">Cosine similarity</span>
+              <span class="badge badge-soft">Instant scoring</span>
+              <span class="badge badge-soft">Teacher & Student portals</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-5 d-flex align-items-center justify-content-center p-4 p-md-5">
+        <div class="auth-card card shadow-lg border-0 w-100" style="max-width: 440px;">
+          <div class="card-body p-4 p-md-5">
+            <div class="text-center mb-4">
+              <div class="brand-mark mb-2">SE</div>
+              <div class="fw-bold">Welcome</div>
+              <div class="text-muted">Sign in or create your account</div>
+            </div>
+
+            {% if error %}
+              <div class="alert alert-danger">{{ error }}</div>
+            {% endif %}
+            {% if message %}
+              <div class="alert alert-success">{{ message }}</div>
+            {% endif %}
+
+            <ul class="nav nav-pills nav-fill gap-2" id="authTabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="login-tab" data-bs-toggle="pill" data-bs-target="#login-pane" type="button" role="tab">Login</button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="register-tab" data-bs-toggle="pill" data-bs-target="#register-pane" type="button" role="tab">Register</button>
+              </li>
+            </ul>
+
+            <div class="tab-content mt-4">
+              <div class="tab-pane fade show active" id="login-pane" role="tabpanel" aria-labelledby="login-tab">
+                <form method="post" action="{{ url_for('login') }}" class="needs-validation" novalidate>
+                  <div class="mb-3">
+                    <label class="form-label">Role</label>
+                    <select class="form-select" name="role" required>
+                      <option value="teacher">Teacher</option>
+                      <option value="student">Student</option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" name="email" placeholder="you@example.com" required />
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" name="password" placeholder="••••••••" required />
+                  </div>
+                  <button class="btn btn-brand w-100" type="submit">Login</button>
+                </form>
+              </div>
+
+              <div class="tab-pane fade" id="register-pane" role="tabpanel" aria-labelledby="register-tab">
+                <form method="post" action="{{ url_for('register') }}" class="needs-validation" novalidate>
+                  <div class="mb-3">
+                    <label class="form-label">Role</label>
+                    <select class="form-select" name="role" required>
+                      <option value="teacher">Teacher</option>
+                      <option value="student">Student</option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Name</label>
+                    <input type="text" class="form-control" name="name" placeholder="Your full name" required />
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" name="email" placeholder="you@example.com" required />
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" name="password" placeholder="Create a password" required />
+                  </div>
+                  <button class="btn btn-brand w-100" type="submit">Create account</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
