@@ -44,13 +44,6 @@ The Subjective Answer Evaluation System is an AI-powered solution designed to au
 4️⃣ Compare with model answer using similarity metrics  
 5️⃣ Generate score and detailed feedback  
 
----
-
-## 📷 Screenshots
-<img width="870" height="497" alt="image" src="https://github.com/user-attachments/assets/e9320c8c-67fb-4e02-a422-7f6cfddbd5ae" />
-
-
----
 
 
 
