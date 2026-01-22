@@ -2,7 +2,3 @@ streamlit
 flask
 scikit-learn
 gunicorn
-<<<<<<< HEAD
-
-=======
->>>>>>> f31e5f9 (Updated Code)
