@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, session, redirect, url_for, flash, Response
 import sqlite3
-from sentence_transformers import SentenceTransformer
+# from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -15,15 +15,16 @@ def init_db():
     conn = sqlite3.connect('results.db')
     return conn
 
-model = SentenceTransformer('all-MiniLM-L6-v2')
+# model = SentenceTransformer('all-MiniLM-L6-v2')
 
 def compute_similarity(reference_answer, student_answer):
     if not student_answer.strip():
         return 0.0
-    ref_embedding = model.encode(reference_answer)
-    student_embedding = model.encode(student_answer)
-    similarity = cosine_similarity([ref_embedding], [student_embedding])[0][0]
-    return float(similarity)
+    # ref_embedding = model.encode(reference_answer)
+    # student_embedding = model.encode(student_answer)
+    # similarity = cosine_similarity([ref_embedding], [student_embedding])[0][0]
+    # return float(similarity)
+    return 0
 
 def calculate_marks(similarity, max_marks):
     if similarity >= 0.8:
