@@ -1,7 +1,5 @@
 streamlit
 flask
-PyPDF2
-sentence-transformers
 scikit-learn
 gunicorn
 
